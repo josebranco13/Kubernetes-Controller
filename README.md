@@ -34,9 +34,56 @@ The project was developed in an academic environment to explore:
 
 ## 🖥️ Application Preview
 
-![Kubernetes Controller Dashboard](docs/images/dashboard.png)
+![Kubernetes Controller Dashboard](./Kubernetes-Controller/kubernetes/docs/images/dashboard.png)
 
 *Main dashboard providing an overview of the connected Kubernetes cluster and its resources.*
+
+---
+
+## 📸 Application Screenshots
+
+### 🔌 Cluster Connection
+
+The application provides a graphical interface for connecting to a Kubernetes cluster through its API server.
+
+![Cluster Connection](./Kubernetes-Controller/kubernetes/docs/images/connection.png)
+
+*Connection interface for configuring access to the Kubernetes cluster.*
+
+### ☸️ Cluster & Resource Management
+
+The application allows users to inspect and manage supported Kubernetes resources through dedicated graphical interfaces.
+
+#### Cluster Nodes & Namespaces
+
+| Nodes | Namespaces |
+|:---:|:---:|
+| ![Cluster Nodes](./Kubernetes-Controller/kubernetes/docs/images/nodes.png) | ![Namespaces](./Kubernetes-Controller/kubernetes/docs/images/namespaces.png) |
+| View cluster nodes and their status. | Inspect and manage Kubernetes namespaces. |
+
+#### Pods & Deployments
+
+| Pods | Deployments |
+|:---:|:---:|
+| ![Pods](./Kubernetes-Controller/kubernetes/docs/images/pods.png) | ![Deployments](./Kubernetes-Controller/kubernetes/docs/images/deployments.png) |
+| Inspect and manage Pods. | Manage application Deployments. |
+
+#### Services & Ingresses
+
+| Services | Ingresses |
+|:---:|:---:|
+| ![Services](./Kubernetes-Controller/kubernetes/docs/images/services.png) | ![Ingresses](./Kubernetes-Controller/kubernetes/docs/images/ingresses.png) |
+| Inspect and manage Services. | Inspect and manage Ingress resources. |
+
+### 🤖 Local AI Assistant
+
+The application integrates a locally hosted AI assistant powered by **Ollama and Llama 3.2 1B**, designed to answer questions about Kubernetes concepts and supported application features.
+
+![Local AI Assistant](./Kubernetes-Controller/kubernetes/docs/images/chatbot.png)
+
+*Local AI assistant providing informational guidance about Kubernetes and the application.*
+
+The assistant does not directly execute cluster operations or modify Kubernetes resources.
 
 ---
 
@@ -163,43 +210,71 @@ The application follows a client-server communication model:
 
 ---
 
-## Technologies
+## 🛠️ Technologies Used
 
-- C#;
-- Windows Forms;
-- Kubernetes REST API;
-- K3s;
-- JSON;
-- YAML;
-- HTTP and HTTPS;
-- bearer token authentication;
-- Kubernetes RBAC;
-- Ollama;
-- Llama 3.2 1B;
-- Ubuntu Server VM;
-- Visual Studio.
+| Category | Technologies |
+|---|---|
+| **Programming Language** | C# |
+| **Desktop Framework** | Windows Forms (.NET) |
+| **Container Orchestration** | Kubernetes, K3s |
+| **API Communication** | Kubernetes REST API, HTTP/HTTPS |
+| **Authentication & Authorization** | Bearer Tokens, Kubernetes ServiceAccounts, RBAC |
+| **Data Formats** | JSON, YAML |
+| **Artificial Intelligence** | Ollama, Llama 3.2 1B |
+| **Server Environment** | Ubuntu Server (Virtual Machine) |
+| **Development Environment** | Visual Studio |
+| **Client Platform** | Windows |
+
+The Windows Forms application runs on Windows and communicates with a K3s cluster hosted on an Ubuntu Server virtual machine.
+
+The AI assistant communicates independently with an Ollama instance hosted in the same laboratory environment.
 
 ---
 
-## Requirements
 
-### Windows computer
+## 📋 Requirements
 
-- Windows 10 or Windows 11;
-- Visual Studio with C# and Windows desktop development support;
-- network access to the Ubuntu VM.
+### Windows Client
 
-### Ubuntu virtual machine
+- Windows 10 or Windows 11
+- Visual Studio with the .NET Desktop Development workload
+- Network connectivity to the Ubuntu Server VM
+- Access to the Kubernetes API server
+- A valid Kubernetes ServiceAccount token
 
-- Ubuntu Server;
-- K3s installed and running;
-- Ollama installed and running;
-- `llama3.2:1b` installed;
-- ports `6443` and `11434` accessible from the Windows host.
+### Ubuntu Server VM
+
+- Ubuntu Server
+- K3s installed and running
+- Kubernetes API server accessible from the Windows client
+- Appropriate Kubernetes RBAC permissions
+
+### Optional: Local AI Assistant
+
+To use the integrated AI assistant, the Ubuntu Server VM must also have:
+
+- Ollama installed and running
+- The `llama3.2:1b` model available
+- TCP port `11434` accessible from the Windows client through a trusted network
+
+> **Note:** The Kubernetes management features can operate independently of the Ollama service. Ollama is only required for the local AI assistant.
 
 ---
 
 ## K3s Access Configuration
+
+
+> ⚠️ **Security Warning — Laboratory Environment Only**
+>
+> This configuration assigns the `cluster-admin` ClusterRole to a dedicated ServiceAccount, granting unrestricted access to Kubernetes cluster resources.
+>
+> **This configuration is intended exclusively for controlled laboratory environments and must not be used in production.**
+>
+> For production environments:
+> - Apply the principle of least privilege using dedicated RBAC permissions.
+> - Protect ServiceAccount tokens as sensitive credentials.
+> - Never commit authentication tokens or secrets to version control.
+
 
 The application requires a Kubernetes ServiceAccount and the necessary RBAC permissions.
 
@@ -253,73 +328,132 @@ sudo k3s kubectl create token kubernetes-controller-sa \
 
 Copy the generated token and use it on the application connection screen.
 
+---
+
+### ServiceAccount Token
+
+Generate a token for the configured ServiceAccount:
+
+```bash
+sudo k3s kubectl create token kubernetes-controller-sa \
+  -n kubernetes-controller \
+  --duration=8760h
+```
+
+> The requested token duration may be limited by the
+> Kubernetes API server configuration. Always verify
+> the effective token expiration time.
+
+Copy the generated token and provide it through the
+application's connection interface.
+
+Never store the token in source code or commit it to GitHub.
+
+
 > The `cluster-admin` role is convenient for a controlled educational environment, but it provides unrestricted access to the cluster. A production deployment should use a dedicated least-privilege ClusterRole.
 
 ---
 
-## Ollama Configuration
 
-Confirm that Ollama is installed:
+## 🤖 Ollama Configuration
+
+The application integrates a locally hosted AI assistant
+powered by Ollama and the `llama3.2:1b` model.
+
+Ollama runs on the Ubuntu Server VM and communicates
+with the Windows application through HTTP.
+
+### 1. Verify Ollama Installation
 
 ```bash
 ollama --version
 ```
 
-Confirm that the model is available:
+List the available models:
 
 ```bash
 ollama list
 ```
 
-Install the model when required:
+### 2. Download the Language Model
+
+If the required model is not installed:
 
 ```bash
 ollama pull llama3.2:1b
 ```
 
-Test it locally:
+Test the model locally:
 
 ```bash
 ollama run llama3.2:1b
 ```
 
-By default, Ollama may only listen on `localhost`. To allow the Windows application to connect to it, edit the systemd service:
+### 3. Configure Network Access
+
+By default, Ollama normally listens on the local interface.
+
+To make it accessible from the Windows application,
+edit the systemd service configuration:
 
 ```bash
 sudo systemctl edit ollama.service
 ```
 
-Add:
+Add the following configuration:
 
 ```ini
 [Service]
 Environment="OLLAMA_HOST=0.0.0.0:11434"
 ```
 
-Reload and restart the service:
+Apply the changes:
 
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl restart ollama
 ```
 
-Check its state:
+### 4. Verify the Service
+
+Check the Ollama service status:
 
 ```bash
 sudo systemctl status ollama --no-pager
 ```
 
-Test it from the Windows computer:
+From the Windows computer, test connectivity:
 
-```powershell
+```bash
 curl http://VM_IP:11434
 ```
 
-Expected response:
+Replace `VM_IP` with the IP address of the Ubuntu Server VM.
+
+The expected response is:
 
 ```text
 Ollama is running
 ```
+
+### Security Considerations
+
+
+> ⚠️ **Security Warning — Ollama Network Exposure**
+>
+> Binding Ollama to `0.0.0.0` makes its API accessible through all available network interfaces.
+>
+> **Only enable this configuration within a trusted laboratory network.**
+>
+> Ensure that:
+> - Access is restricted through appropriate firewall rules.
+> - The API is not exposed directly to the public Internet.
+> - Only authorized devices can connect to the Ollama service.
+
+
+The chatbot is optional. If Ollama is unavailable, the
+Kubernetes management features remain accessible.
+
 
 ---
 
@@ -359,58 +493,78 @@ http://VM_IP:8001
 
 ---
 
-## Kubernetes API Endpoints
 
-The application uses endpoints such as:
+## 🔗 Kubernetes API Endpoints
 
-```text
-GET /version
-GET /api/v1/nodes
-GET /api/v1/namespaces
-GET /api/v1/pods
-GET /apis/apps/v1/deployments
-GET /api/v1/services
-GET /apis/networking.k8s.io/v1/ingresses
-```
+The application communicates directly with the
+Kubernetes API server through REST requests.
 
-Namespaced operations use endpoints such as:
+### Cluster-Wide Endpoints
 
-```text
-/api/v1/namespaces/{namespace}/pods
-/apis/apps/v1/namespaces/{namespace}/deployments
-/api/v1/namespaces/{namespace}/services
-/apis/networking.k8s.io/v1/namespaces/{namespace}/ingresses
-```
+| Resource | HTTP Method | API Endpoint |
+|---|---|---|
+| Cluster Version | GET | `/version` |
+| Nodes | GET | `/api/v1/nodes` |
+| Namespaces | GET | `/api/v1/namespaces` |
+| Pods | GET | `/api/v1/pods` |
+| Deployments | GET | `/apis/apps/v1/deployments` |
+| Services | GET | `/api/v1/services` |
+| Ingresses | GET | `/apis/networking.k8s.io/v1/ingresses` |
 
-Create and delete operations are performed through the corresponding Kubernetes REST API endpoints.
+### Namespaced Resource Endpoints
+
+| Resource | API Endpoint |
+|---|---|
+| Pods | `/api/v1/namespaces/{namespace}/pods` |
+| Deployments | `/apis/apps/v1/namespaces/{namespace}/deployments` |
+| Services | `/api/v1/namespaces/{namespace}/services` |
+| Ingresses | `/apis/networking.k8s.io/v1/namespaces/{namespace}/ingresses` |
+
+The application also uses the corresponding
+resource-specific API endpoints for supported
+creation, inspection, and deletion operations.
+
+All authenticated requests are subject to the
+permissions assigned to the Kubernetes ServiceAccount.
+
 
 ---
 
 
+## 📂 Repository Structure
+
 ```text
-KubernetesController/
+Kubernetes-Controller/
 │
-├── Project Overview
-├── Main Screenshot
-├── Key Features
-├── System Architecture
-├── Technologies Used
-├── Application Screenshots
-├── Requirements
-├── Getting Started
-│   ├── K3s Access Configuration
-│   ├── Ollama Configuration
-│   └── Running the Application
-├── Kubernetes API Endpoints
-├── Repository Structure
-├── Security Considerations
-├── Known Limitations
-├── Future Improvements
-├── Author and Contributions
-└── License
+├── KubernetesController/
+│   └── Application source code and project files
+│
+├── docs/
+│   └── images/
+│       ├── chatbot.png
+│       ├── connection.png
+│       ├── dashboard.png
+│       ├── deployments.png
+│       ├── ingresses.png
+│       ├── namespaces.png
+│       ├── nodes.png
+│       ├── pods.png
+│       └── services.png
+│
+├── LICENSE
+└── README.md
 ```
 
-The exact structure may vary depending on the current project version.
+The `KubernetesController` directory contains the
+Windows Forms application source code and related
+project files.
+
+The `docs/images` directory contains screenshots
+demonstrating the application's interface and features.
+
+The repository also includes documentation for configuring
+Kubernetes ServiceAccount access and the Ollama integration.
+
 
 ---
 
@@ -493,13 +647,23 @@ This project demonstrates practical knowledge in:
 
 ---
 
-## License
+
+## 📄 License
 
 This project is licensed under the MIT License.
+
 See the [LICENSE](LICENSE) file for details.
 
 ---
 
-## Author
+## 👨‍💻 Author
 
-Developed as an academic and portfolio project focused on Kubernetes, K3s, C# WinForms, REST APIs, and local artificial intelligence.
+**José Branco**
+
+Computer Science Engineering Student
+
+GitHub: [josebranco13](https://github.com/josebranco13)
+
+Developed as an academic and portfolio project focused on
+Kubernetes cluster administration, K3s, REST API integration,
+C# desktop development, and local AI assistance.
