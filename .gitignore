@@ -55,4 +55,3 @@ publish/
 *.bak
 *.orig
 *.rej
-kubernetes/
