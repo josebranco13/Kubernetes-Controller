@@ -34,7 +34,7 @@ The project was developed in an academic environment to explore:
 
 ## 🖥️ Application Preview
 
-![Kubernetes Controller Dashboard](./Kubernetes-Controller/kubernetes/docs/images/dashboard.png)
+![Kubernetes Controller Dashboard](./kubernetes/docs/images/dashboard.png)
 
 *Main dashboard providing an overview of the connected Kubernetes cluster and its resources.*
 
@@ -46,7 +46,7 @@ The project was developed in an academic environment to explore:
 
 The application provides a graphical interface for connecting to a Kubernetes cluster through its API server.
 
-![Cluster Connection](./Kubernetes-Controller/kubernetes/docs/images/connection.png)
+![Cluster Connection](./kubernetes/docs/images/connection.png)
 
 *Connection interface for configuring access to the Kubernetes cluster.*
 
@@ -58,28 +58,28 @@ The application allows users to inspect and manage supported Kubernetes resource
 
 | Nodes | Namespaces |
 |:---:|:---:|
-| ![Cluster Nodes](./Kubernetes-Controller/kubernetes/docs/images/nodes.png) | ![Namespaces](./Kubernetes-Controller/kubernetes/docs/images/namespaces.png) |
+| ![Cluster Nodes](./kubernetes/docs/images/nodes.png) | ![Namespaces](./kubernetes/docs/images/namespaces.png) |
 | View cluster nodes and their status. | Inspect and manage Kubernetes namespaces. |
 
 #### Pods & Deployments
 
 | Pods | Deployments |
 |:---:|:---:|
-| ![Pods](./Kubernetes-Controller/kubernetes/docs/images/pods.png) | ![Deployments](./Kubernetes-Controller/kubernetes/docs/images/deployments.png) |
+| ![Pods](./kubernetes/docs/images/pods.png) | ![Deployments](./kubernetes/docs/images/deployments.png) |
 | Inspect and manage Pods. | Manage application Deployments. |
 
 #### Services & Ingresses
 
 | Services | Ingresses |
 |:---:|:---:|
-| ![Services](./Kubernetes-Controller/kubernetes/docs/images/services.png) | ![Ingresses](./Kubernetes-Controller/kubernetes/docs/images/ingresses.png) |
+| ![Services](./kubernetes/docs/images/services.png) | ![Ingresses](./kubernetes/docs/images/ingresses.png) |
 | Inspect and manage Services. | Inspect and manage Ingress resources. |
 
 ### 🤖 Local AI Assistant
 
 The application integrates a locally hosted AI assistant powered by **Ollama and Llama 3.2 1B**, designed to answer questions about Kubernetes concepts and supported application features.
 
-![Local AI Assistant](./Kubernetes-Controller/kubernetes/docs/images/chatbot.png)
+![Local AI Assistant](./kubernetes/docs/images/chatbot.png)
 
 *Local AI assistant providing informational guidance about Kubernetes and the application.*
 
